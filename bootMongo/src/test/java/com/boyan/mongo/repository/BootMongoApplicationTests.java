@@ -1,4 +1,4 @@
-package com.boyan.mongo;
+package com.boyan.mongo.repository;
 
 import org.junit.Ignore;
 import org.junit.Test;
