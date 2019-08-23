@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -60,6 +61,28 @@ public class BookDAOImpl implements BookDAO {
 			mongoOps.dropCollection(BOOK_COLLECTION);
 			System.out.println("dropped collection");
 		}
+	}
+
+	@Override
+	public Book findByTypeAndPriceLessThan(String type, int price) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("type").is(type).and("price").lt(price));
+		return mongoOps.findOne(query, Book.class);
+	}
+
+	@Override
+	public Book findByTypeAndPriceBetween(String type, int moreThan, int lessThan) {
+		Query q = new Query();
+		q.addCriteria(Criteria.where("type").is(type).andOperator(
+				Criteria.where("price").gt(moreThan),
+				Criteria.where("price").lt(lessThan)));
+		return mongoOps.findOne(q, Book.class);
+	}
+
+	@Override
+	public Book findByFantasyAndPriceLessThanTenWithBasicQuery() {
+		BasicQuery query = new BasicQuery("{'price': { $lt: 10}, 'type': 'Fantasy'}");
+		return mongoOps.findOne(query, Book.class);
 	}
 
 }
